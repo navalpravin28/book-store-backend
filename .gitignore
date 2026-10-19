@@ -3,5 +3,5 @@ __pycache__/
 .env
 venv/
 .pytest_cache/
-# app/static/uploads/*/*
-# !app/static/uploads/*/.gitkeep
+app/static/uploads/*/*
+!app/static/uploads/*/.gitkeep
