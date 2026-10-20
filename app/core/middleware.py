@@ -10,6 +10,22 @@ from app.core.config import settings
 limiter = Limiter(key_func=get_remote_address, default_limits=["200/minute"])
 
 
+# class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+#     async def dispatch(self, request: Request, call_next):
+#         response = await call_next(request)
+#         path = request.url.path
+#         response.headers["X-Content-Type-Options"] = "nosniff"
+#         response.headers["X-Frame-Options"] = "DENY"
+#         response.headers["Referrer-Policy"] = "no-referrer"
+#         response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+#         response.headers["Cross-Origin-Resource-Policy"] = "same-site"
+#         if not path.startswith(("/docs", "/redoc", "/openapi.json")):
+#             response.headers["Content-Security-Policy"] = "default-src 'none'; frame-ancestors 'none'"
+#         if not path.startswith("/static"):
+#             response.headers["Cache-Control"] = "no-store"
+#         if settings.is_production:
+#             response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+#         return response
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         response = await call_next(request)
@@ -18,7 +34,10 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response.headers["X-Frame-Options"] = "DENY"
         response.headers["Referrer-Policy"] = "no-referrer"
         response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
-        response.headers["Cross-Origin-Resource-Policy"] = "same-site"
+        
+        # FIX: Change from "same-site" to "cross-origin" to allow external frontends to load assets
+        response.headers["Cross-Origin-Resource-Policy"] = "cross-origin"
+        
         if not path.startswith(("/docs", "/redoc", "/openapi.json")):
             response.headers["Content-Security-Policy"] = "default-src 'none'; frame-ancestors 'none'"
         if not path.startswith("/static"):
@@ -26,7 +45,6 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         if settings.is_production:
             response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
         return response
-
 
 class _TooLarge(Exception):
     pass
