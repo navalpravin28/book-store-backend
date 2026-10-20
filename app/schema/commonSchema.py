@@ -71,7 +71,7 @@ def _image_url(v: str) -> str:
     raise ValueError("imageUrl must be an uploaded image path or a valid HTTP/HTTPS URL")
 
 
-def _http_or_https_url(v: str) -> str:  # You can keep your function name or update it to match
+def _https_url(v: str) -> str:  # You can keep your function name or update it to match
     parsed = urlparse(v)
     allowed_schemes = {"http", "https"}
     if parsed.scheme not in allowed_schemes or not parsed.netloc or len(v) > 500 or re.search(r"[\s<>\"'\\]", v):
